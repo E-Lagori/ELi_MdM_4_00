@@ -23,6 +23,8 @@
 #ifndef ELi_MdM_4_00_H
 #define ELi_MdM_4_00_H
 
+#define ELi_McM_4_00H
+
 #ifdef ESP32
   #include "esp32/MdM_ESP32D_4_00.h"
 #else 
