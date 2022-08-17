@@ -38,6 +38,7 @@
  * TODO known issues:
  */
 
+#define <McM_ESP32D_4_00.h>
 #define <MdM_ESP32D_4_00.h>
 
 MD3_6_4_00_SD::MD3_6_4_00_SD(MD3_6_4_00_Pinconfig p, uint32_t f, float maxspeed = 100, mcpwm_unit_t unt = MCPWM_UNIT_0, mcpwm_io_signals_t io = MCPWM0A){
