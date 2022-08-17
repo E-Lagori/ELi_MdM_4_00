@@ -23,6 +23,7 @@
 #ifndef MdM_ESP32D_4_00.h
 
 #define MdM_ESP32D_4_00.h
+#include <McM_ESP32D_4_00.h>
 
 struct MD3_6_4_00_Pinconfig{
   uint8_t IN1,IN2, VREF;
