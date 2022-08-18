@@ -20,10 +20,13 @@
 
 
 
-#ifndef MdM_ESP32D_4_00.h
+#ifndef MdM_ESP32D_4_00_H
+#define MdM_ESP32D_4_00_H
 
-#define MdM_ESP32D_4_00.h
-#include <McM_ESP32D_4_00.h>
+#include <ELi_McM_4_00.h>
+#include "driver/mcpwm.h"
+#include "soc/mcpwm_reg.h"
+#include "soc/mcpwm_struct.h"
 
 struct MD3_6_4_00_Pinconfig{
   uint8_t IN1,IN2, VREF;
@@ -38,7 +41,7 @@ class MD3_6_4_00_SD{
     uint32_t freq;
     float maxspeed;
   public:
-    MD3_6_4_00_SD(MD3_6_4_00_Pinconfig,  uint32_t, float,mcpwm_unit_t, mcpwm_io_signals_t);
+    MD3_6_4_00_SD(MD3_6_4_00_Pinconfig, float,mcpwm_unit_t, mcpwm_io_signals_t, uint32_t);
     void startmotor();
     void setspeed(float);
     void stopmotor();
@@ -53,9 +56,9 @@ class MD3_6_4_00_DD{
     float maxspeed;
     bool dir;
   public:
-    MD3_6_4_00_DD(MD3_6_4_00_Pinconfig,  uint32_t, float,mcpwm_unit_t, mcpwm_timer_t);
+    MD3_6_4_00_DD(MD3_6_4_00_Pinconfig, float, mcpwm_unit_t, mcpwm_timer_t,uint32_t);
     void startmotor();
     void setspeed(float,bool);
     void stopmotor();
 };
-
+#endif
