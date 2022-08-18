@@ -37,11 +37,14 @@
 /*
  * TODO known issues:
  */
+#include <ELi_MdM_4_00.h>
+#include <ELi_McM_4_00.h>
 
-#define <McM_ESP32D_4_00.h>
-#define <MdM_ESP32D_4_00.h>
+#include "driver/mcpwm.h"
+#include "soc/mcpwm_reg.h"
+#include "soc/mcpwm_struct.h"
 
-MD3_6_4_00_SD::MD3_6_4_00_SD(MD3_6_4_00_Pinconfig p, uint32_t f, float maxspeed = 100, mcpwm_unit_t unt = MCPWM_UNIT_0, mcpwm_io_signals_t io = MCPWM0A){
+MD3_6_4_00_SD::MD3_6_4_00_SD(MD3_6_4_00_Pinconfig p, float maxspeed = 100, mcpwm_unit_t unt = MCPWM_UNIT_0, mcpwm_io_signals_t io = MCPWM0A, uint32_t f = 100){
   mcpwm_config_t pwm_conf;
   
   this->pin = p;
@@ -78,7 +81,7 @@ void MD3_6_4_00_SD::stopmotor(){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------
-MD3_6_4_00_DD::MD3_6_4_00_DD(MD3_6_4_00_Pinconfig p, uint32_t f, float maxspeed = 100, mcpwm_unit_t unt = MCPWM_UNIT_0, mcpwm_timer_t t = MCPWM_TIMER_0){
+MD3_6_4_00_DD::MD3_6_4_00_DD(MD3_6_4_00_Pinconfig p, float maxspeed = 100, mcpwm_unit_t unt = MCPWM_UNIT_0, mcpwm_timer_t t = MCPWM_TIMER_0, uint32_t f = 100){
   mcpwm_io_signals_t tempA, tempB;
   this->pin = p;
   this->freq = f;
