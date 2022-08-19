@@ -41,6 +41,8 @@ class MD3_6_4_00_SD{
     uint32_t freq;
     float maxspeed;
   public:
+    MD3_6_4_00_SD(MD3_6_4_00_Pinconfig, float);
+	MD3_6_4_00_SD(MD3_6_4_00_Pinconfig, float,mcpwm_unit_t, mcpwm_io_signals_t);
     MD3_6_4_00_SD(MD3_6_4_00_Pinconfig, float,mcpwm_unit_t, mcpwm_io_signals_t, uint32_t);
     void startmotor();
     void setspeed(float);
@@ -56,6 +58,8 @@ class MD3_6_4_00_DD{
     float maxspeed;
     bool dir;
   public:
+    MD3_6_4_00_DD(MD3_6_4_00_Pinconfig, float);
+	MD3_6_4_00_DD(MD3_6_4_00_Pinconfig, float, mcpwm_unit_t, mcpwm_timer_t);
     MD3_6_4_00_DD(MD3_6_4_00_Pinconfig, float, mcpwm_unit_t, mcpwm_timer_t,uint32_t);
     void startmotor();
     void setspeed(float,bool);
