@@ -6,6 +6,7 @@
  * Versions  :
  * ------ 	---------- 		-------------------------
  * 0.1.0  	2018-08-17		First beta
+ * 0.2.0    2018-08-26    First release
  *****************************************/
 
 /*
@@ -43,55 +44,10 @@
 #include "driver/mcpwm.h"
 #include "soc/mcpwm_reg.h"
 #include "soc/mcpwm_struct.h"
+#include <Arduino.h>
 
-MD3_6_4_00_SD::MD3_6_4_00_SD(MD3_6_4_00_Pinconfig p, float maxspeed = 100){
-  mcpwm_config_t pwm_conf;
-  
-  this->pin = p;
-  this->freq = 100;
-  this->pwm_num = MCPWM_UNIT_0;
-  this->io = MCPWM0A;
-  this->maxspeed = maxspeed;
-  switch(this->io){
-    case MCPWM0A: this->tim = MCPWM_TIMER_0;this->opr = MCPWM_OPR_A;pwm_conf.cmpr_a = 0;break;
-    case MCPWM0B: this->tim = MCPWM_TIMER_0;this->opr = MCPWM_OPR_B;pwm_conf.cmpr_b = 0;break;
-    case MCPWM1A: this->tim = MCPWM_TIMER_1;this->opr = MCPWM_OPR_A;pwm_conf.cmpr_a = 0;break;
-    case MCPWM1B: this->tim = MCPWM_TIMER_1;this->opr = MCPWM_OPR_B;pwm_conf.cmpr_b = 0;break;
-    case MCPWM2A: this->tim = MCPWM_TIMER_2;this->opr = MCPWM_OPR_A;pwm_conf.cmpr_a = 0;break;
-    case MCPWM2B: this->tim = MCPWM_TIMER_2;this->opr = MCPWM_OPR_B;pwm_conf.cmpr_b = 0;break;
-  };
-  pwm_conf.frequency = this->freq;
-  pwm_conf.counter_mode = MCPWM_UP_COUNTER;
-  pwm_conf.duty_mode = MCPWM_DUTY_MODE_0;
-  mcpwm_gpio_init(this->pwm_num, this->io, this->pin.IN1);
-  mcpwm_init(this->pwm_num, this->tim, &pwm_conf);
-}
 
-MD3_6_4_00_SD::MD3_6_4_00_SD(MD3_6_4_00_Pinconfig p, float maxspeed = 100, mcpwm_unit_t unt = MCPWM_UNIT_0, mcpwm_io_signals_t io = MCPWM0A){
-
-  mcpwm_config_t pwm_conf;
-  
-  this->pin = p;
-  this->freq = 100;
-  this->pwm_num = unt;
-  this->io = io;
-  this->maxspeed = maxspeed;
-  switch(this->io){
-    case MCPWM0A: this->tim = MCPWM_TIMER_0;this->opr = MCPWM_OPR_A;pwm_conf.cmpr_a = 0;break;
-    case MCPWM0B: this->tim = MCPWM_TIMER_0;this->opr = MCPWM_OPR_B;pwm_conf.cmpr_b = 0;break;
-    case MCPWM1A: this->tim = MCPWM_TIMER_1;this->opr = MCPWM_OPR_A;pwm_conf.cmpr_a = 0;break;
-    case MCPWM1B: this->tim = MCPWM_TIMER_1;this->opr = MCPWM_OPR_B;pwm_conf.cmpr_b = 0;break;
-    case MCPWM2A: this->tim = MCPWM_TIMER_2;this->opr = MCPWM_OPR_A;pwm_conf.cmpr_a = 0;break;
-    case MCPWM2B: this->tim = MCPWM_TIMER_2;this->opr = MCPWM_OPR_B;pwm_conf.cmpr_b = 0;break;
-  };
-  pwm_conf.frequency = this->freq;
-  pwm_conf.counter_mode = MCPWM_UP_COUNTER;
-  pwm_conf.duty_mode = MCPWM_DUTY_MODE_0;
-  mcpwm_gpio_init(this->pwm_num, this->io, this->pin.IN1);
-  mcpwm_init(this->pwm_num, this->tim, &pwm_conf);
-}
-
-MD3_6_4_00_SD::MD3_6_4_00_SD(MD3_6_4_00_Pinconfig p, float maxspeed = 100, mcpwm_unit_t unt = MCPWM_UNIT_0, mcpwm_io_signals_t io = MCPWM0A, uint32_t f = 100){
+MD3_6_4_00_SD::MD3_6_4_00_SD(MD3_6_4_00_Pinconfig p, float maxspeed, mcpwm_unit_t unt, mcpwm_io_signals_t io, uint32_t f){
   mcpwm_config_t pwm_conf;
   
   this->pin = p;
@@ -119,7 +75,8 @@ void MD3_6_4_00_SD::startmotor(){
 }
 
 void MD3_6_4_00_SD::setspeed(float speed){
-  mcpwm_set_duty(this->pwm_num, this->tim, this->opr, ((this->maxspeed - abs(speed))/this->maxspeed) * 100);
+  static float temp = ((this->maxspeed - abs(speed))/this->maxspeed);
+  mcpwm_set_duty(this->pwm_num, this->tim, this->opr, (temp < 0?0:temp) * 100);
 }
 
 void MD3_6_4_00_SD::stopmotor(){
@@ -128,55 +85,7 @@ void MD3_6_4_00_SD::stopmotor(){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------
-MD3_6_4_00_DD::MD3_6_4_00_DD(MD3_6_4_00_Pinconfig p, float maxspeed = 100){
-  mcpwm_io_signals_t tempA, tempB;
-  this->pin = p;
-  this->freq = 100;
-  this->pwm_num = MCPWM_UNIT_0;
-  this->maxspeed = maxspeed;
-  this->tim = MCPWM_TIMER_0;
-
-  switch (this->tim){
-    case MCPWM_TIMER_0: tempA = MCPWM0A; tempB = MCPWM0B; break;
-    case MCPWM_TIMER_1: tempA = MCPWM1A; tempB = MCPWM1B; break;
-    case MCPWM_TIMER_2: tempA = MCPWM2A; tempB = MCPWM2B; break;
-  }
-  mcpwm_gpio_init(this->pwm_num, tempA, this->pin.IN1);
-  mcpwm_gpio_init(this->pwm_num, tempB, this->pin.IN2);
-  mcpwm_config_t pwm_conf;
-  pwm_conf.frequency = this->freq;
-  pwm_conf.cmpr_a = 0;
-  pwm_conf.cmpr_b = 0;
-  pwm_conf.counter_mode = MCPWM_UP_COUNTER;
-  pwm_conf.duty_mode = MCPWM_DUTY_MODE_0;
-  mcpwm_init(this->pwm_num, this->tim, &pwm_conf);
-}
-
-MD3_6_4_00_DD::MD3_6_4_00_DD(MD3_6_4_00_Pinconfig p, float maxspeed = 100, mcpwm_unit_t unt = MCPWM_UNIT_0, mcpwm_timer_t t = MCPWM_TIMER_0){
-  mcpwm_io_signals_t tempA, tempB;
-  this->pin = p;
-  this->freq = 100;
-  this->pwm_num = unt;
-  this->maxspeed = maxspeed;
-  this->tim = t;
-
-  switch (this->tim){
-    case MCPWM_TIMER_0: tempA = MCPWM0A; tempB = MCPWM0B; break;
-    case MCPWM_TIMER_1: tempA = MCPWM1A; tempB = MCPWM1B; break;
-    case MCPWM_TIMER_2: tempA = MCPWM2A; tempB = MCPWM2B; break;
-  }
-  mcpwm_gpio_init(this->pwm_num, tempA, this->pin.IN1);
-  mcpwm_gpio_init(this->pwm_num, tempB, this->pin.IN2);
-  mcpwm_config_t pwm_conf;
-  pwm_conf.frequency = this->freq;
-  pwm_conf.cmpr_a = 0;
-  pwm_conf.cmpr_b = 0;
-  pwm_conf.counter_mode = MCPWM_UP_COUNTER;
-  pwm_conf.duty_mode = MCPWM_DUTY_MODE_0;
-  mcpwm_init(this->pwm_num, this->tim, &pwm_conf);
-}
-
-MD3_6_4_00_DD::MD3_6_4_00_DD(MD3_6_4_00_Pinconfig p, float maxspeed = 100, mcpwm_unit_t unt = MCPWM_UNIT_0, mcpwm_timer_t t = MCPWM_TIMER_0, uint32_t f = 100){
+MD3_6_4_00_DD::MD3_6_4_00_DD(MD3_6_4_00_Pinconfig p, float maxspeed, mcpwm_unit_t unt, mcpwm_timer_t t, uint32_t f){
   mcpwm_io_signals_t tempA, tempB;
   this->pin = p;
   this->freq = f;
@@ -205,14 +114,15 @@ void MD3_6_4_00_DD::startmotor(){
 }
 
 void MD3_6_4_00_DD::setspeed(float speed, bool dir){
+  static float temp = speed/this->maxspeed;
   if(dir){
     mcpwm_set_signal_low(this->pwm_num, this->tim, MCPWM_OPR_B);
-    mcpwm_set_duty(this->pwm_num, this->tim, MCPWM_OPR_A, (speed/this->maxspeed) * 100);
+    mcpwm_set_duty(this->pwm_num, this->tim, MCPWM_OPR_A, (temp>1? 1:temp)  * 100);
     mcpwm_set_duty_type(this->pwm_num, this->tim, MCPWM_OPR_A, MCPWM_DUTY_MODE_0); 
   }
   else{
     mcpwm_set_signal_low(this->pwm_num, this->tim, MCPWM_OPR_A);
-    mcpwm_set_duty(this->pwm_num, this->tim, MCPWM_OPR_B, (speed/this->maxspeed) * 100);
+    mcpwm_set_duty(this->pwm_num, this->tim, MCPWM_OPR_B, (temp>1? 1:temp) * 100);
     mcpwm_set_duty_type(this->pwm_num, this->tim, MCPWM_OPR_B, MCPWM_DUTY_MODE_0); 
   }
 }
