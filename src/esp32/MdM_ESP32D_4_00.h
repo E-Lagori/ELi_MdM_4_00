@@ -31,6 +31,7 @@
 struct MD3_6_4_00_Pinconfig{
   uint8_t IN1,IN2, VREF;
 };
+
 class MD3_6_4_00_SD{
   private:
     MD3_6_4_00_Pinconfig pin;
@@ -41,9 +42,7 @@ class MD3_6_4_00_SD{
     uint32_t freq;
     float maxspeed;
   public:
-    MD3_6_4_00_SD(MD3_6_4_00_Pinconfig, float);
-	MD3_6_4_00_SD(MD3_6_4_00_Pinconfig, float,mcpwm_unit_t, mcpwm_io_signals_t);
-    MD3_6_4_00_SD(MD3_6_4_00_Pinconfig, float,mcpwm_unit_t, mcpwm_io_signals_t, uint32_t);
+    MD3_6_4_00_SD(MD3_6_4_00_Pinconfig p, float maxspeed = 100, mcpwm_unit_t unt = MCPWM_UNIT_0, mcpwm_io_signals_t io = MCPWM0A, uint32_t f = 100);
     void startmotor();
     void setspeed(float);
     void stopmotor();
@@ -58,9 +57,7 @@ class MD3_6_4_00_DD{
     float maxspeed;
     bool dir;
   public:
-    MD3_6_4_00_DD(MD3_6_4_00_Pinconfig, float);
-	MD3_6_4_00_DD(MD3_6_4_00_Pinconfig, float, mcpwm_unit_t, mcpwm_timer_t);
-    MD3_6_4_00_DD(MD3_6_4_00_Pinconfig, float, mcpwm_unit_t, mcpwm_timer_t,uint32_t);
+    MD3_6_4_00_DD(MD3_6_4_00_Pinconfig p, float maxspeed = 100, mcpwm_unit_t unt = MCPWM_UNIT_0, mcpwm_timer_t t = MCPWM_TIMER_0, uint32_t f = 100);
     void startmotor();
     void setspeed(float,bool);
     void stopmotor();
