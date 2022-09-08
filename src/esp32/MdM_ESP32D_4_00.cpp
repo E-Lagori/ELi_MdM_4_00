@@ -47,7 +47,7 @@
 #include <Arduino.h>
 
 
-MD3_6_4_00_SD::MD3_6_4_00_SD(MD3_6_4_00_Pinconfig p, float maxspeed, float max_rate, mcpwm_unit_t unt, mcpwm_io_signals_t io, uint32_t f){
+MD3_6_4_00_SD::MD3_6_4_00_SD(MD3_6_4_00_Pinconfig p, float maxspeed, float maxrate, mcpwm_unit_t unt, mcpwm_io_signals_t io, uint32_t f){
   mcpwm_config_t pwm_conf;
   this->pin = p;
   this->freq = f;
@@ -55,7 +55,7 @@ MD3_6_4_00_SD::MD3_6_4_00_SD(MD3_6_4_00_Pinconfig p, float maxspeed, float max_r
   this->pwm_num = unt;
   this->maxspeed = maxspeed;
   this->p_speed = 0;
-  this->max_rate = max_rate;
+  this->maxrate = maxrate;
   this->io = io;
   
   switch(this->io){
@@ -91,7 +91,7 @@ void MD3_6_4_00_SD::stopmotor(){
 
 void MD3_6_4_00_DD::setspeed_lin(float sp){
   float temp_speed = sp - this->p_speed;
-  float iter = (abs(temp_speed)/this->maxspeed)*(this->max_rate/this->wait*1000.0);
+  float iter = (abs(temp_speed)/this->maxspeed)*(this->maxrate/this->wait*1000.0);
   int int_iter = iter;
   float del_pwm = temp_speed/int_iter;
   float extr_wait = fmod(iter, 1)*this->wait;
@@ -106,7 +106,7 @@ void MD3_6_4_00_DD::setspeed_lin(float sp){
   this->p_speed=sp;
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------
-MD3_6_4_00_DD::MD3_6_4_00_DD(MD3_6_4_00_Pinconfig p, float maxspeed, float max_rate, mcpwm_unit_t unt, mcpwm_timer_t t, uint32_t f){
+MD3_6_4_00_DD::MD3_6_4_00_DD(MD3_6_4_00_Pinconfig p, float maxspeed, float maxrate, mcpwm_unit_t unt, mcpwm_timer_t t, uint32_t f){
   mcpwm_io_signals_t tempA, tempB;
   this->pin = p;
   this->freq = f;
@@ -115,7 +115,7 @@ MD3_6_4_00_DD::MD3_6_4_00_DD(MD3_6_4_00_Pinconfig p, float maxspeed, float max_r
   this->maxspeed = maxspeed;
   this->tim = t;
   this->p_speed = 0;
-  this->max_rate = max_rate;
+  this->maxrate = maxrate;
 
   switch (this->tim){
     case MCPWM_TIMER_0: tempA = MCPWM0A; tempB = MCPWM0B; break;
@@ -162,18 +162,14 @@ void MD3_6_4_00_DD::stopmotor(){
 
 void MD3_6_4_00_DD::setspeed_lin(float sp){
   float temp_speed = sp - this->p_speed;
-  Serial.print((abs(temp_speed)/this->maxspeed)); Serial.print(' ');
-  Serial.print(this->max_rate); Serial.print(' '); Serial.println(this->wait);
-  float iter = (abs(temp_speed)/this->maxspeed)*(this->max_rate/this->wait*1000.0);
+  float iter = (abs(temp_speed)/this->maxspeed)*(this->maxrate/this->wait*1000.0);
   int int_iter = iter;
   float del_pwm = temp_speed/int_iter;
   float extr_wait = fmod(iter, 1)*this->wait;
   float pwm = this->p_speed;
-  Serial.println(int_iter);
   for(int i=0; i<int_iter; i++){
       pwm += del_pwm;
       this->setspeed(pwm,(pwm > 0)?0:1);
-      Serial.print(pwm);Serial.print(' ');
       delay(this->wait);
   }
   delay(extr_wait);
