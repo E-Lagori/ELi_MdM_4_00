@@ -89,7 +89,7 @@ void MD3_6_4_00_SD::stopmotor(){
    mcpwm_stop(this->pwm_num,this->tim);
 }
 
-void MD3_6_4_00_DD::setspeed_lin(float sp){
+void MD3_6_4_00_SD::setspeed_lin(float sp){
   float temp_speed = sp - this->p_speed;
   float iter = (abs(temp_speed)/this->maxspeed)*(this->maxrate/this->wait*1000.0);
   int int_iter = iter;
@@ -169,7 +169,7 @@ void MD3_6_4_00_DD::setspeed_lin(float sp){
   float pwm = this->p_speed;
   for(int i=0; i<int_iter; i++){
       pwm += del_pwm;
-      this->setspeed(pwm,(pwm > 0)?0:1);
+      this->setspeed(abs(pwm),(pwm > 0)?0:1);
       delay(this->wait);
   }
   delay(extr_wait);
