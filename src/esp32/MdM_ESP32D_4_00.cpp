@@ -173,7 +173,7 @@ void MD3_6_4_00_DD::setspeed_lin(float sp){
       delay(this->wait);
   }
   delay(extr_wait);
-  this->setspeed(sp,(sp > 0)?0:1);
+  this->setspeed(abs(sp),(sp > 0)?0:1);
   this->p_speed=sp;
   Serial.println(this->p_speed);
 }
