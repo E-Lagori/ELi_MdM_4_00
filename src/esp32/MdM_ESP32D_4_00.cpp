@@ -101,7 +101,8 @@ void MD3_6_4_00_SD::setspeed_lin(float sp){
       this->setspeed(pwm,(pwm > 0)?0:1);
       delay(this->wait);
   }
-  delay(extr_wait);
+  if (extr_wait > 1)
+    delay(extr_wait);
   this->setspeed(sp,(sp > 0)?0:1);
   this->p_speed=sp;
 }
@@ -172,7 +173,8 @@ void MD3_6_4_00_DD::setspeed_lin(float sp){
       this->setspeed(abs(pwm),(pwm > 0)?0:1);
       delay(this->wait);
   }
-  delay(extr_wait);
+  if (extr_wait > 1)
+    delay(extr_wait);
   this->setspeed(abs(sp),(sp > 0)?0:1);
   this->p_speed=sp;
   Serial.println(this->p_speed);
